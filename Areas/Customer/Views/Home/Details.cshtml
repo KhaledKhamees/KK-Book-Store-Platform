@@ -1,0 +1,114 @@
+﻿@model MVCProject2.Models.Models.ShoppingCart
+
+<div class="container mt-4">
+    <!-- Page Title -->
+    <h2 class="text-center mb-4">Product Details</h2>
+
+    <!-- Product Card -->
+    <form method="post">
+        <input hidden asp-for="ProductId" />
+        <div class="card shadow-sm p-4 mb-5 bg-white rounded">
+            <div class="row">
+                    <!-- Product Image -->
+                    <div class="col-md-5 col-lg-4 text-center mb-4 mb-md-0">
+                        <img src="@Model.Product.ImageUrl" alt="@Model.Product.Name" class="img-fluid rounded product-image" />
+                    </div>
+                <!-- Product Details and Purchase Options -->
+                <div class="col-md-7 col-lg-8">
+                    <!-- Product Information Table -->
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td><strong>Name</strong></td>
+                                <td>@Model.Product.Name</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Description</strong></td>
+                                <td>@Model.Product.Description</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ISBN</strong></td>
+                                <td>@Model.Product.ISBN</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Author</strong></td>
+                                <td>@Model.Product.Author</td>
+                            </tr>
+                            <tr>
+                                <td><strong>List Price</strong></td>
+                                <td>$@Model.Product.ListPrice</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Category</strong></td>
+                                <td>@Model.Product.Category</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Purchase Section -->
+                    <section class="mt-4">
+                        <div class="input-group mb-3">
+                            <label for="quantity" class="input-group-text bg-primary text-white small-width">Quantity</label>
+                            <input type="number" asp-for="count" value="1" min="1" class="form-control text-end small-width-input" id="quantity" /> 
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm small-width-btn">Add to Cart</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Back to Home Page Button -->
+    <div class="text-center">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Back to Home Page</a>
+    </div>
+</div>
+
+<!-- Updated Styles -->
+<style>
+    .container {
+        max-width: 1100px;
+    }
+
+    h2 {
+        color: #4a4a4a;
+    }
+
+    .table td, .table th {
+        padding: 12px;
+    }
+
+    /* Product Image */
+    .product-image {
+        max-height: 350px;
+        object-fit: cover;
+        border: 1px solid #ddd;
+    }
+
+    .small-width {
+        width: 100px;
+    }
+
+    .small-width-input {
+        max-width: 75px; /* Smaller width for the input field */
+    }
+
+    .small-width-btn {
+        max-width: 200px; /* Adjust the width of the button */
+        font-size: 1rem;
+        padding: 10px 60px;
+        margin: 0 auto; /* Center the button */
+    }
+
+    /* Back Button */
+    .btn-secondary {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .d-grid {
+        margin-top: 15px;
+    }
+</style>

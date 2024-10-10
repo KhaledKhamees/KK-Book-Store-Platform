@@ -1,0 +1,128 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<!-- Add a background and styling to the title -->
+<div class="bg-primary text-white text-center py-4 mb-5">
+    <h1>@ViewData["Title"]</h1>
+    <p class="lead">Join us today to start your journey!</p>
+</div>
+
+<!-- Adjust form layout and design -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 mb-5 rounded">
+                <div class="card-body p-5">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <h2 class="text-center mb-4">Create a New Account</h2>
+                        <hr class="mb-4" />
+
+                        <!-- Improved form structure with fieldsets -->
+                        <fieldset class="border p-4 mb-4 rounded">
+                            <legend class="w-auto fw-bold">Account Details</legend>
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger text-center" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Name" class="form-control rounded" placeholder="Name" aria-label="Name" />
+                                <label asp-for="Input.Name">Name</label>
+                                <span asp-validation-for="Input.Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control rounded" autocomplete="username" placeholder="name@example.com" aria-label="Email" />
+                                <label asp-for="Input.Email">Email</label>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" type="password" class="form-control rounded" autocomplete="new-password" placeholder="Password" />
+                                <label asp-for="Input.Password">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.ConfirmPassword" type="password" class="form-control rounded" autocomplete="new-password" placeholder="Confirm Password" />
+                                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            <!-- New City field -->
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.City" class="form-control rounded" placeholder="City" aria-label="City" />
+                                <label asp-for="Input.City">City</label>
+                                <span asp-validation-for="Input.City" class="text-danger"></span>
+                            </div>
+
+                            <!-- New Postal Code field -->
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.PostelCode" class="form-control rounded" placeholder="Postal Code" aria-label="Postal Code" />
+                                <label asp-for="Input.PostelCode">Postal Code</label>
+                                <span asp-validation-for="Input.PostelCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <select asp-for="Input.Role" asp-items="@Model.Input.RolesList" class="form-select rounded">
+                                    <option disabled selected>Select Role</option>
+                                </select>
+                                <label asp-for="Input.Role">Role</label>
+                            </div>
+
+                            <div class="form-floating mb-3" style="display:none;" id="companyField">
+                                <select asp-for="Input.CompanyId" asp-items="@Model.Input.CompaniesList" class="form-select rounded">
+                                    <option disabled selected>Select Company</option>
+                                </select>
+                                <label asp-for="Input.CompanyId">Company</label>
+                            </div>
+
+                            <!-- Enhanced button design -->
+                            <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg w-100 rounded">Register</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <section>
+                <h3 class="text-center">Register with External Services</h3>
+                <hr class="mb-4" />
+                @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div class="alert alert-warning text-center">
+                        <p>
+                            No external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="alert-link">article</a> about setting up external services.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-center">
+                        <div>
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-outline-primary me-2 rounded" name="provider" value="@provider.Name" title="Log in using @provider.DisplayName">
+                                    @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                }
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#Input_Role').change(function () {
+                var selection = $('#Input_Role option:selected').text();
+                $('#companyField').toggle(selection === 'Company'); 
+            });
+        });
+    </script>
+}

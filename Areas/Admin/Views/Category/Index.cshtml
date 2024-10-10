@@ -1,0 +1,86 @@
+﻿@model List<Category>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    h2 {
+        color: #333;
+        text-align: left;
+    }
+
+    .btn-create-category {
+        float: right;
+    }
+
+    /* Custom icon size */
+    .btn i {
+        font-size: 1.5rem; /* Increase icon size */
+    }
+</style>
+
+<div class="container">
+    <div class="row pt-4 pb-3">
+        <div class="col-md-6">
+            <h2>Categories List</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary btn-create-category">
+                <i class="bi bi-plus-circle"></i> Create New Category
+            </a>
+        </div>
+    </div>
+
+    <table class="table table-hover table-bordered mt-4">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Category Name</th>
+                <th scope="col">Display Order</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderBy(c=>c.DisplayOrder))
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.DisplayOrder</td>
+                    <td>
+                        <div class="w-100 btn-group" role="group">
+                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <form asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash3-fill"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

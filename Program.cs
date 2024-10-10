@@ -1,3 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using MVCProject2.Data;
+using MVCProject2.Reprository;
+using MVCProject2.Reprository.IRepository;
+using MVCProject2.Reprository.IReprository;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using MVCProject2.Utility;
+using Stripe;
+
 namespace MVCProject2
 {
 	public class Program
@@ -9,7 +19,36 @@ namespace MVCProject2
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 
-			var app = builder.Build();
+			// Link SQL server and add connection string from Appsettings json file 
+			builder.Services.AddDbContext<ApplecationDBContext>(
+				options => options.UseSqlServer
+				(builder.Configuration.GetConnectionString("FirstConnection")));
+
+			builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            
+			builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplecationDBContext>().AddDefaultTokenProviders();
+            
+			builder.Services.ConfigureApplicationCookie(options =>
+			{
+				options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Login";
+                options.AccessDeniedPath = $"/Identity/Account/Login";
+
+            });
+
+
+            #region DI
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+			builder.Services.AddScoped<IApplecationUserRepository, ApplecationUserRepository>();
+            builder.Services.AddScoped<IEmailSender,EmailSender>();
+            #endregion
+            builder.Services.AddRazorPages(); //this and the [app.MapRazorPages();] below use to can display the layout of login and regestration pages 
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())
@@ -20,15 +59,16 @@ namespace MVCProject2
 			}
 
 			app.UseHttpsRedirection();
+			
 			app.UseStaticFiles();
-
+			StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 			app.UseRouting();
-
+			app.UseAuthentication();
 			app.UseAuthorization();
-
+			app.MapRazorPages();
 			app.MapControllerRoute(
 				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+				pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 			app.Run();
 		}
