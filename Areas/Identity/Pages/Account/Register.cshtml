@@ -6,7 +6,13 @@
 
 <!-- Add a background and styling to the title -->
 <div class="bg-primary text-white text-center py-4 mb-5">
-    <h1>@ViewData["Title"]</h1>
+    @if (User.IsInRole(SD.Role_Admin))
+    {
+        <h1>Regist - Add User</h1>
+    }else
+    {
+        <h1>@ViewData["Title"]</h1>
+    }
     <p class="lead">Join us today to start your journey!</p>
 </div>
 
@@ -62,7 +68,7 @@
                                 <label asp-for="Input.PostelCode">Postal Code</label>
                                 <span asp-validation-for="Input.PostelCode" class="text-danger"></span>
                             </div>
-
+                            @if(User.IsInRole(SD.Role_Admin)){
                             <div class="form-floating mb-3">
                                 <select asp-for="Input.Role" asp-items="@Model.Input.RolesList" class="form-select rounded">
                                     <option disabled selected>Select Role</option>
@@ -76,7 +82,7 @@
                                 </select>
                                 <label asp-for="Input.CompanyId">Company</label>
                             </div>
-
+                            }
                             <!-- Enhanced button design -->
                             <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg w-100 rounded">Register</button>
                         </fieldset>
@@ -84,13 +90,13 @@
                 </div>
             </div>
         </div>
-
+        @if(!User.IsInRole(SD.Role_Admin)){
         <div class="col-md-4 mx-auto">
             <section class="card shadow-sm">
                 <div class="card-body p-4">
                     <h3 class="text-center mb-3">Register with External Services</h3>
                     <hr class="mb-4" />
-
+                    
                     @if ((Model.ExternalLogins?.Count ?? 0) == 0)
                     {
                         <div class="alert alert-warning text-center">
@@ -116,7 +122,7 @@
                     }
                 </div>
             </section>
-        </div>
+        </div>}
 
     </div>
 </div>
