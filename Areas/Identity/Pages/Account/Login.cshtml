@@ -62,33 +62,48 @@
     </div>
 
     <!-- External Login Section -->
-    <div class="col-md-6">
-        <section>
-            <h3 class="text-center">Use another service to log in</h3>
-            <hr class="mb-4" />
-            @if ((Model.ExternalLogins?.Count ?? 0) == 0)
-            {
-                <div class="alert alert-warning text-center">
-                    <p>
-                        No external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="alert-link">article</a> about setting up external services.
-                    </p>
-                </div>
-            }
-            else
-            {
-                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal text-center">
-                    <div>
-                        @foreach (var provider in Model.ExternalLogins!)
-                        {
-                            <button type="submit" class="btn btn-outline-primary me-2 rounded-pill" name="provider" value="@provider.Name" title="Log in using @provider.DisplayName">
-                                @provider.DisplayName
-                            </button>
-                        }
+    <div class="col-md-6 mx-auto">
+        <section class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-3">Use another service to log in</h3>
+                <hr class="mb-4" />
+
+                @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                {
+                    <div class="alert alert-warning text-center">
+                        <p>
+                            No external authentication services configured. See this
+                            <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="alert-link">article</a>
+                            about setting up external services.
+                        </p>
                     </div>
-                </form>
-            }
+                }
+                else
+                {
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal text-center">
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm" name="provider" value="@provider.Name" title="Log in using @provider.DisplayName">
+                                    @if (provider.Name == "Google")
+                                    {
+                                        <i class="bi bi-google me-2"></i>
+                                    }
+                                    else if (provider.Name == "Facebook")
+                                    {
+                                        <i class="bi bi-facebook me-2"></i>
+                                    }
+                                    <!-- You can add more providers here as needed -->
+                                    @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                }
+            </div>
         </section>
     </div>
+
 </div>
 
 @section Scripts {

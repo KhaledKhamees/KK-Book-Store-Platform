@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MVCProject2.Utility;
 using Stripe;
+using System.Configuration;
 
 namespace MVCProject2
 {
@@ -34,6 +35,21 @@ namespace MVCProject2
                 options.LogoutPath = $"/Identity/Account/Login";
                 options.AccessDeniedPath = $"/Identity/Account/Login";
 
+            });
+			builder.Services.AddDistributedMemoryCache();
+			builder.Services.AddSession(options => {
+				options.IdleTimeout = TimeSpan.FromMinutes(100);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
+			builder.Services.AddAuthentication().AddGoogle(options => {
+				IConfigurationSection googleAuthentication = builder.Configuration.GetSection("Authentication:Google");
+				options.ClientId = googleAuthentication["ClientId"];
+				options.ClientSecret = googleAuthentication["ClientSecret"];
+			}).AddFacebook(Facebookoptions => {
+                IConfigurationSection googleAuthentication = builder.Configuration.GetSection("Authentication:Facebook");
+                Facebookoptions.ClientId = googleAuthentication["AppId"];
+                Facebookoptions.ClientSecret = googleAuthentication["AppSecret"];
             });
 
 
@@ -65,6 +81,7 @@ namespace MVCProject2
 			app.UseRouting();
 			app.UseAuthentication();
 			app.UseAuthorization();
+			app.UseSession();
 			app.MapRazorPages();
 			app.MapControllerRoute(
 				name: "default",

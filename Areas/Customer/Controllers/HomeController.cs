@@ -4,6 +4,7 @@ using MVCProject2.Models;
 using MVCProject2.Models.Models;
 using MVCProject2.Reprository.IRepository;
 using System.Diagnostics;
+using MVCProject2.Utility; 
 using System.Security.Claims;
 
 namespace MVCProject2.Areas.Customer.Controllers
@@ -48,13 +49,15 @@ namespace MVCProject2.Areas.Customer.Controllers
             if (ShoCartFromDb != null)
             {
                 ShoCartFromDb.count += shoppingCart.count;
-                _unitOfWork.ShoppingCart.Update(ShoCartFromDb);
+                _unitOfWork.ShoppingCart.Update(ShoCartFromDb); 
+                _unitOfWork.Save();
             }
             else
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                //HttpContext.Session.SetInt32(SD.SessionCart, _unitOfWork.ShoppingCart.GetAll(U => U.ApplecationUserId == UserId).Count());
+                _unitOfWork.Save();
             }
-            _unitOfWork.Save();
             TempData["success"] = "Cart updated Sussessfully";
             return RedirectToAction("Index");
         }
