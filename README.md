@@ -1,7 +1,7 @@
 # KK Book Store Platform
 
 ## Project Overview
-KK Book Store is an e-commerce platform for purchasing books, with roles for customers, admins, companies, and employees. The platform features a payment gateway integrated with Stripe and offers login and registration options via Facebook accounts.
+KK Book Store is an e-commerce platform for purchasing books, with roles for customers, admins, companies, and employees. The platform features a payment gateway integrated with Stripe and offers login and registration options via Facebook and Google accounts.
 
 ## Technologies Used
 - ASP.NET Core MVC
@@ -19,9 +19,10 @@ Before you begin, ensure you have the following installed:
 - [SQL Server](https://www.microsoft.com/en-us/sql-server)
 - [Node.js](https://nodejs.org/en/download/) (for managing client-side dependencies)
 - [Stripe Account](https://stripe.com/) (for payment gateway integration)
-- [Facebook Developer Account](https://developers.facebook.com/) (for social login)
+- [Facebook Developer Account](https://developers.facebook.com/) (for Facebook social login)
+- [Google Developer Account](https://console.developers.google.com/) (for Google social login)
 
-You will also need to configure Stripe API keys and Facebook app credentials in the project configuration.
+You will also need to configure Stripe API keys and both Facebook and Google app credentials in the project configuration.
 
 ## Installation
 1. Clone the repository:
@@ -42,7 +43,7 @@ You will also need to configure Stripe API keys and Facebook app credentials in 
      dotnet ef database update
      ```
 
-4. Configure the Stripe and Facebook API keys in `appsettings.json`:
+4. Configure the Stripe, Facebook, and Google API keys in `appsettings.json`:
    ```json
    {
      "Stripe": {
@@ -52,6 +53,10 @@ You will also need to configure Stripe API keys and Facebook app credentials in 
      "Facebook": {
        "AppId": "your-app-id",
        "AppSecret": "your-app-secret"
+     },
+     "Google": {
+       "ClientId": "your-google-client-id",
+       "ClientSecret": "your-google-client-secret"
      }
    }
    ```
@@ -62,4 +67,3 @@ You will also need to configure Stripe API keys and Facebook app credentials in 
    ```
 
 6. Navigate to `http://localhost:5000` to access the KK Book Store platform.
-
