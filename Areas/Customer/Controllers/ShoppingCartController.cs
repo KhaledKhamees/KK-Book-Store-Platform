@@ -36,29 +36,45 @@ namespace MVCProject2.Areas.Customer.Controllers
 
             return View(ShoppingCartVM);
         }
-        public IActionResult Summary() 
+        public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var UserId = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (UserId == null)
+            {
+                // Handle case when UserId is null, e.g., redirect to login or show an error
+                return RedirectToAction("Login", "Account");
+            }
+
             ShoppingCartVM = new()
             {
                 shoppingCartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplecationUserId == UserId, "Product").ToList(),
                 OrderHeader = new OrderHeader()
             };
-            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplecationUser.Get(u=>u.Id==UserId);  
-            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
-            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
-            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostelCode;
-            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
-            //ShoppingCartVM.OrderHeader.StreetAddress = "none";
+
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplecationUser.Get(u => u.Id == UserId);
+
+            if (ShoppingCartVM.OrderHeader.ApplicationUser == null)
+            {
+                // Handle the case when the user is not found in the database
+                return RedirectToAction("Error", "Home");
+            }
+
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name ?? "Name not available";
+            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City ?? "City not available";
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostelCode ?? "Postal Code not available";
+            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber ?? "Phone number not available";
+
             foreach (var cart in ShoppingCartVM.shoppingCartsList)
             {
                 cart.Price = CalculateTotalBasedOnCount(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Product.ListPrice * cart.count);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Product?.ListPrice ?? 0) * cart.count; // Ensure product price isn't null
             }
-            return View(ShoppingCartVM);
 
+            return View(ShoppingCartVM);
         }
+
         [HttpPost]
         [ActionName("Summary")]
 		public IActionResult SummaryPost()

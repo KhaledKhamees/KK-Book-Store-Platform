@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using MVCProject2.Utility;
 using Stripe;
 using System.Configuration;
+using MVCProject2.Data.DbIntiallizer;
 
 namespace MVCProject2
 {
@@ -54,6 +55,7 @@ namespace MVCProject2
 
 
             #region DI
+			builder.Services.AddScoped<IDbIntiallizer, DBIntializer>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -82,6 +84,12 @@ namespace MVCProject2
 			app.UseAuthentication();
 			app.UseAuthorization();
 			app.UseSession();
+			using (var scope = app.Services.CreateScope())
+			{
+				var DbIntialzer = scope.ServiceProvider.GetRequiredService<IDbIntiallizer>();
+				DbIntialzer.Initialize();
+			}
+
 			app.MapRazorPages();
 			app.MapControllerRoute(
 				name: "default",
@@ -90,4 +98,5 @@ namespace MVCProject2
 			app.Run();
 		}
 	}
+
 }
